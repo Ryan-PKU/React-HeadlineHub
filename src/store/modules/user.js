@@ -5,17 +5,21 @@ import { getLocalToken, setLocalToken } from "@/utils/token";
 const userSlice = createSlice({
     name: 'user',
     initialState: {
-        token: getLocalToken() || ''
+        token: getLocalToken() || '',
+        userInfo: {}
     },
     reducers: {
         setToken(state, action) {
             state.token = action.payload
             setLocalToken(action.payload)
+        },
+        setUserInfo(state, action){
+            state.userInfo = action.payload
         }
     }
 })
 
-const { setToken } = userSlice.actions
+const { setToken, setUserInfo } = userSlice.actions
 
 const fetchLogin = (loginForm) => {
     return async (dispatch) => {
@@ -26,6 +30,8 @@ const fetchLogin = (loginForm) => {
 
 
 
-export { fetchLogin }
+
+
+export { fetchLogin, setUserInfo}
 
 export default userSlice.reducer

@@ -8,6 +8,7 @@ import {
 import './index.scss'
 import { Outlet } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const { Header, Sider } = Layout
 
@@ -35,6 +36,7 @@ const AllLayout = () => {
         navigate(item.key)
         //console.log(item);
     }
+    const location = useLocation()
     return (
         <Layout>
             <Header className="header">
@@ -57,7 +59,7 @@ const AllLayout = () => {
                         items={items}
                         style={{ height: '100%', borderRight: 0 }}
                         onClick={menuClick}
-                        /* selectedKeys={['/']} */
+                        selectedKeys={location.pathname}
                     >
                     </Menu>
                 </Sider>
