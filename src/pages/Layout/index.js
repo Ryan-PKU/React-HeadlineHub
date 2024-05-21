@@ -6,28 +6,35 @@ import {
     LogoutOutlined,
 } from '@ant-design/icons'
 import './index.scss'
+import { Outlet } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const { Header, Sider } = Layout
 
 const items = [
     {
         label: 'Home',
-        key: '1',
+        key: '/',
         icon: <HomeOutlined />,
     },
     {
         label: 'Article Management',
-        key: '2',
+        key: '/article',
         icon: <DiffOutlined />,
     },
     {
         label: 'Create Article',
-        key: '3',
+        key: '/publish',
         icon: <EditOutlined />,
     },
 ]
 
-const GeekLayout = () => {
+const AllLayout = () => {
+    const navigate = useNavigate()
+    const menuClick = (item) => {
+        navigate(item.key)
+        //console.log(item);
+    }
     return (
         <Layout>
             <Header className="header">
@@ -48,13 +55,17 @@ const GeekLayout = () => {
                         theme="dark"
                         defaultSelectedKeys={['1']}
                         items={items}
-                        style={{ height: '100%', borderRight: 0 }}></Menu>
+                        style={{ height: '100%', borderRight: 0 }}
+                        onClick={menuClick}
+                        /* selectedKeys={['/']} */
+                    >
+                    </Menu>
                 </Sider>
                 <Layout className="layout-content" style={{ padding: 20 }}>
-                    Content
+                    <Outlet />
                 </Layout>
             </Layout>
         </Layout>
     )
 }
-export default GeekLayout
+export default AllLayout
