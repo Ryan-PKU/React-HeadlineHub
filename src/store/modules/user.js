@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { request } from "@/utils";
 import { getLocalToken, setLocalToken, clearLocalToken } from "@/utils/token";
 import { loginAPI } from "@/apis/user";
 

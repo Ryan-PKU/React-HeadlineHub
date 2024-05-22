@@ -4,7 +4,6 @@ import logo from '@/assets/headline.png'
 import { useDispatch } from 'react-redux'
 import { fetchLogin } from '@/store/modules/user'
 import { useNavigate } from 'react-router-dom'
-import { request } from '@/utils'
 import { registerAPI } from '@/apis/user'
 
 const Login = () => {
@@ -17,7 +16,12 @@ const Login = () => {
             navigate('/')
         }
         catch (error){
-            alert('Failed to log in')
+            if (error.response) {
+                alert(`Failed to log in: ${error.response.status}\nMessage: ${error.response.data.message}`);
+            } else {
+                alert(`Failed to log in. Error message: ${error.message}`);
+            }
+            window.location.reload()
         }
     }
     const [form] = Form.useForm()
@@ -28,7 +32,12 @@ const Login = () => {
             await registerAPI(formValue)
             alert("Register successfully")
         } catch (error) {
-            alert("Failed to register")
+            if (error.response) {
+                alert(`Failed to register with error code: ${error.response.status}\nMessage: ${error.response.data.message}`);
+            } else {
+                alert(`Failed to register. Error message: ${error.message}`);
+            }
+            window.location.reload()
         }
     }
     return (

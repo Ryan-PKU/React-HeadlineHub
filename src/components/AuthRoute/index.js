@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { request } from '@/utils';
 import { setUserInfo } from '@/store/modules/user';
 import { useDispatch } from 'react-redux';
 import { protectedAPI } from '@/apis/user';
@@ -17,6 +16,11 @@ const AuthRoute = ({ children }) => {
                 dispatch(setUserInfo(res))
                 setIsAuthenticated(true);
             } catch (error) {
+                if (error.response) {
+                    alert(`Token error code: ${error.response.status}\nMessage: ${error.response.data.message}`);
+                } else {
+                    alert(`Token error. Error message: ${error.message}`);
+                }
                 setIsAuthenticated(false);
             }
         };

@@ -25,10 +25,10 @@ request.interceptors.response.use((response) => {
 
     return response.data
 }, (error) => {
-    if (error.response.status === 403) {
+    /* if (error.response.status === 402) {
         window.location.reload()
     }
-    else if(error.response.status === 401){
+    else  */if(error.response.status === 401){
         clearLocalToken()
     }
     return Promise.reject(error)

@@ -1,7 +1,7 @@
 import BarChart from "./components/BarChart"
 
 const Home = () => {
-  const title1 = 'Histort Score 1'
+  const title1 = 'History Score 1'
   const title2 = 'History Score 2'
   const data1 = [[3,2,2], [2, 4, 1], [6,3,5]]
   const data2 = [[4,4,6], [2,7,1], [6,3,4]]
