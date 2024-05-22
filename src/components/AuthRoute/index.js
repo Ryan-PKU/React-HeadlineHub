@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { request } from '@/utils';
 import { setUserInfo } from '@/store/modules/user';
 import { useDispatch } from 'react-redux';
+import { protectedAPI } from '@/apis/user';
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const AuthRoute = ({ children }) => {
@@ -12,7 +13,7 @@ const AuthRoute = ({ children }) => {
         const checkAuth = async () => {
             try {
                 await delay(1000)
-                const res = await request.post('/protected');
+                const res = await protectedAPI();
                 dispatch(setUserInfo(res))
                 setIsAuthenticated(true);
             } catch (error) {

@@ -9,6 +9,9 @@ import './index.scss'
 import { Outlet } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
+import { clearUserInfo } from '@/store/modules/user'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 const { Header, Sider } = Layout
 
@@ -34,17 +37,23 @@ const AllLayout = () => {
     const navigate = useNavigate()
     const menuClick = (item) => {
         navigate(item.key)
-        //console.log(item);
     }
     const location = useLocation()
+    const dispatch = useDispatch()
+    const logOut = ()=>{
+        dispatch(clearUserInfo())
+        navigate('/login')
+    }
+    const user = useSelector(state=>state.user)
+    const alias = user.userInfo.name || 'User'
     return (
         <Layout>
             <Header className="header">
                 <div className="logo" />
                 <div className="user-info">
-                    <span className="user-name">Someone</span>
+                    <span className="user-name">Welcome, {alias}</span>
                     <span className="user-logout">
-                        <Popconfirm title="Log out?" okText="Log out" cancelText="Cancel">
+                        <Popconfirm title="Log out?" okText="Log out" cancelText="Cancel" onConfirm={logOut}>
                             <LogoutOutlined /> Log out
                         </Popconfirm>
                     </span>

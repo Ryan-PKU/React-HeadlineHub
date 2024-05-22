@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getLocalToken } from './token'
+import { clearLocalToken } from './token'
 
 const request = axios.create({
     baseURL: 'http://localhost:8880',
@@ -24,7 +25,12 @@ request.interceptors.response.use((response) => {
 
     return response.data
 }, (error) => {
-
+    if (error.response.status === 403) {
+        window.location.reload()
+    }
+    else if(error.response.status === 401){
+        clearLocalToken()
+    }
     return Promise.reject(error)
 })
 

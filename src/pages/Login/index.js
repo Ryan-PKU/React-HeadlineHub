@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { fetchLogin } from '@/store/modules/user'
 import { useNavigate } from 'react-router-dom'
 import { request } from '@/utils'
+import { registerAPI } from '@/apis/user'
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -24,7 +25,7 @@ const Login = () => {
         try {
 
             const formValue = await form.validateFields()
-            await request.post('/register', formValue)
+            await registerAPI(formValue)
             alert("Register successfully")
         } catch (error) {
             alert("Failed to register")

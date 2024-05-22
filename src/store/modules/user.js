@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { request } from "@/utils";
-import { getLocalToken, setLocalToken } from "@/utils/token";
+import { getLocalToken, setLocalToken, clearLocalToken } from "@/utils/token";
+import { loginAPI } from "@/apis/user";
 
 const userSlice = createSlice({
     name: 'user',
@@ -15,15 +16,20 @@ const userSlice = createSlice({
         },
         setUserInfo(state, action){
             state.userInfo = action.payload
+        },
+        clearUserInfo(state){
+            state.token = ''
+            state.userInfo = {}
+            clearLocalToken()
         }
     }
 })
 
-const { setToken, setUserInfo } = userSlice.actions
+const { setToken, setUserInfo, clearUserInfo } = userSlice.actions
 
 const fetchLogin = (loginForm) => {
     return async (dispatch) => {
-        const res = await request.post('/login', loginForm)
+        const res = await loginAPI(loginForm)
         dispatch(setToken(res.token))
     }
 }
@@ -32,6 +38,6 @@ const fetchLogin = (loginForm) => {
 
 
 
-export { fetchLogin, setUserInfo}
+export { fetchLogin, setUserInfo, clearUserInfo}
 
 export default userSlice.reducer
