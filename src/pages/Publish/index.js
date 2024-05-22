@@ -54,6 +54,8 @@ const Publish = () => {
         }
         try {
             await createArticleAPI(reqData)
+            alert("Publish successfully")
+            window.location.reload()
         }
         catch (error) {
             if (error.response) {
@@ -63,6 +65,14 @@ const Publish = () => {
             }
             navigate('/login');
         }
+    }
+    const [imageList, setImageList] = useState([])
+    const onUploadChange = (info) => {
+        setImageList(info.fileList)
+    }
+    const [imageType, setImageType] = useState(0)
+    const onTypeChange = (e) => {
+        setImageType(e.target.value)
     }
     return (
         <div className="publish">
@@ -78,7 +88,7 @@ const Publish = () => {
                 <Form
                     labelCol={{ span: 4 }}
                     wrapperCol={{ span: 16 }}
-                    initialValues={{ type: 1 }}
+                    initialValues={{ type: 0 }}
                     validateTrigger={['onBlur']}
                     onFinish={onFinish}
                 >
@@ -101,6 +111,27 @@ const Publish = () => {
                                 </Option>
                             ))}
                         </Select>
+                    </Form.Item>
+                    <Form.Item label="Cover">
+                        <Form.Item name="type">
+                            <Radio.Group onChange={onTypeChange}>
+                                <Radio value={1}>single</Radio>
+                                <Radio value={3}>triple</Radio>
+                                <Radio value={0}>none</Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                        {imageType > 0 &&
+                            <Upload
+                                listType="picture-card"
+                                showUploadList
+                                name='image'
+                                action={'http://geek.itheima.net/v1_0/upload'}
+                                onChange={onUploadChange}
+                            >
+                                <div style={{ marginTop: 8 }}>
+                                    <PlusOutlined />
+                                </div>
+                            </Upload>}
                     </Form.Item>
                     <Form.Item
                         label="Content"
