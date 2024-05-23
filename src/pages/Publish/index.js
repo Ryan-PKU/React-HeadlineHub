@@ -14,34 +14,18 @@ import { Link } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useState, useEffect, useRef } from 'react'
-import { getChannelsAPI } from '@/apis/article'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createArticleAPI } from '@/apis/article'
 import { message } from 'antd'
+import { useChannel } from '@/hooks/useChannel'
 
 const { Option } = Select
 
 const Publish = () => {
+    const [form] = Form.useForm()
     const navigate = useNavigate()
-    const [channelList, setChannelList] = useState([])
-    useEffect(() => {
-        const getChannelList = async () => {
-            try {
-                const res = await getChannelsAPI()
-                setChannelList(res.channels)
-            }
-            catch (error) {
-                if (error.response) {
-                    alert(`Failed to get the channel list with error code: ${error.response.status}\nMessage: ${error.response.data.message}`);
-                } else {
-                    alert(`Failed to get the channel list. Error message: ${error.message}`);
-                }
-                navigate('/login')
-            }
-        }
-        getChannelList()
-    }, [navigate])
+    const {channelList} = useChannel()
     const cacheImageList = useRef([])
     const [imageList, setImageList] = useState([])
     const onUploadChange = (info) => {
@@ -74,7 +58,10 @@ const Publish = () => {
         try {
             await createArticleAPI(reqData)
             message.success("Publish successfully")
-            window.location.reload()
+            form.resetFields(); // 重置表单字段
+            setImageList([]); // 清空图片列表
+            cacheImageList.current = []; // 清空缓存图片列表
+            setImageType(0);
         }
         catch (error) {
             if (error.response) {
@@ -97,6 +84,7 @@ const Publish = () => {
                 }
             >
                 <Form
+                    form={form}
                     labelCol={{ span: 4 }}
                     wrapperCol={{ span: 16 }}
                     initialValues={{ type: 0 }}
