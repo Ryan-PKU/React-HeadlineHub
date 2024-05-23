@@ -14,10 +14,11 @@ import { Link } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getChannelsAPI } from '@/apis/article'
 import { useNavigate } from 'react-router-dom'
 import { createArticleAPI } from '@/apis/article'
+import { message } from 'antd'
 
 const { Option } = Select
 
@@ -41,20 +42,38 @@ const Publish = () => {
         }
         getChannelList()
     }, [navigate])
+    const cacheImageList = useRef([])
+    const [imageList, setImageList] = useState([])
+    const onUploadChange = (info) => {
+        setImageList(info.fileList)
+        cacheImageList.current = info.fileList
+    }
+    const [imageType, setImageType] = useState(0)
+    const onTypeChange = (e) => {
+        const type = e.target.value
+        setImageType(type)
+        if (type === 1) {
+            const imgList = cacheImageList.current[0] ? [cacheImageList.current[0]] : []
+            setImageList(imgList)
+        } else if (type === 3) {
+            setImageList(cacheImageList.current)
+        }
+    }
     const onFinish = async (formValue) => {
+        if (imageType !== imageList.length) return message.warning('Unmatched picture numbers')
         const { channel_id, content, title } = formValue
         const reqData = {
             title,
             content,
             cover: {
-                type: 0,
-                images: []
+                type: imageType,
+                images: imageList.map(item => item.response.data.url)
             },
             channel_id
         }
         try {
             await createArticleAPI(reqData)
-            alert("Publish successfully")
+            message.success("Publish successfully")
             window.location.reload()
         }
         catch (error) {
@@ -65,14 +84,6 @@ const Publish = () => {
             }
             navigate('/login');
         }
-    }
-    const [imageList, setImageList] = useState([])
-    const onUploadChange = (info) => {
-        setImageList(info.fileList)
-    }
-    const [imageType, setImageType] = useState(0)
-    const onTypeChange = (e) => {
-        setImageType(e.target.value)
     }
     return (
         <div className="publish">
@@ -123,10 +134,14 @@ const Publish = () => {
                         {imageType > 0 &&
                             <Upload
                                 listType="picture-card"
+                                className="avatar-uploader"
                                 showUploadList
                                 name='image'
                                 action={'http://geek.itheima.net/v1_0/upload'}
                                 onChange={onUploadChange}
+                                maxCount={imageType}
+                                multiple={imageType > 1}
+                                fileList={imageList}
                             >
                                 <div style={{ marginTop: 8 }}>
                                     <PlusOutlined />
