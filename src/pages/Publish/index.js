@@ -19,18 +19,34 @@ import { useNavigate } from 'react-router-dom'
 import { createArticleAPI } from '@/apis/article'
 import { message } from 'antd'
 import { useChannel } from '@/hooks/useChannel'
+import { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { fetchArticleAPI } from '@/apis/article'
 
 const { Option } = Select
 
 const Publish = () => {
     const [form] = Form.useForm()
     const navigate = useNavigate()
-    const {channelList} = useChannel()
+    const { channelList } = useChannel()
+    /* const articleData = useFetch(id)
+    useEffect(() => {
+        if (articleData) {
+            form.setFieldsValue({
+                title: articleData.title,
+                content: articleData.content,
+                channel_id: articleData.channel_id,
+            });
+        }
+    }, [articleData, form]); */
     const cacheImageList = useRef([])
     const [imageList, setImageList] = useState([])
     const onUploadChange = (info) => {
         setImageList(info.fileList)
         cacheImageList.current = info.fileList
+        //setImageList(info.fileList.map(item=>({url:item.response.data.url})))
+        //cacheImageList.current = info.fileList.map(item=>({url:item.response.data.url}))
+
     }
     const [imageType, setImageType] = useState(0)
     const onTypeChange = (e) => {
@@ -42,6 +58,9 @@ const Publish = () => {
         } else if (type === 3) {
             setImageList(cacheImageList.current)
         }
+        else {
+            setImageList([])
+        }
     }
     const onFinish = async (formValue) => {
         if (imageType !== imageList.length) return message.warning('Unmatched picture numbers')
@@ -51,16 +70,23 @@ const Publish = () => {
             content,
             cover: {
                 type: imageType,
-                images: imageList.map(item => item.response.data.url)
+                images: imageList.map(item => (item.url ? item.url : item.response.data.url))
+                //images: imageList.map(item => item.url)
             },
-            channel_id
+            channel_id,
+            id:articleId
         }
         try {
             await createArticleAPI(reqData)
-            message.success("Publish successfully")
-            form.resetFields(); // 重置表单字段
-            setImageList([]); // 清空图片列表
-            cacheImageList.current = []; // 清空缓存图片列表
+            if (articleId){
+                message.success("Edit successfully")
+            }
+            else{
+                message.success("Publish successfully")
+            }
+            form.resetFields();
+            setImageList([]);
+            cacheImageList.current = [];
             setImageType(0);
         }
         catch (error) {
@@ -72,13 +98,38 @@ const Publish = () => {
             navigate('/login');
         }
     }
+
+    const [searchParams] = useSearchParams()
+    const articleId = searchParams.get('id')
+    useEffect(() => {
+        const fetchArticle = async (id) => {
+            try {
+                const res = await fetchArticleAPI(id)
+                form.setFieldsValue({ ...res, type: res.cover.type })
+                setImageType(res.cover.type)
+                setImageList(res.cover.images.map(url => ({ url })))
+                cacheImageList.current = res.cover.images.map(url => ({ url }))
+                //setImageList(res.cover.images.map(url=>({response:{data:{url}}})))
+            }
+            catch (error) {
+                if (error.response) {
+                    alert(`Failed to fetch article with certain id with error code: ${error.response.status}\nMessage: ${error.response.data.message}`);
+                } else {
+                    alert(`Failed to fetch article with certain id. Error message: ${error.message}`);
+                }
+                navigate('/login')
+            }
+        }
+        if (articleId) { fetchArticle(articleId) }
+    }, [articleId, navigate, form])
+
     return (
         <div className="publish">
             <Card
                 title={
                     <Breadcrumb items={[
                         { title: <Link to={'/'}>Home</Link> },
-                        { title: 'Publish' },
+                        { title: `${articleId ? 'Edit' : 'Publish'}` },
                     ]}
                     />
                 }
@@ -111,7 +162,7 @@ const Publish = () => {
                             ))}
                         </Select>
                     </Form.Item>
-                    <Form.Item label="Cover">
+                    <Form.Item label="Cover" name='cover'>
                         <Form.Item name="type">
                             <Radio.Group onChange={onTypeChange}>
                                 <Radio value={1}>single</Radio>
@@ -152,7 +203,7 @@ const Publish = () => {
                     <Form.Item wrapperCol={{ offset: 9 }}>
                         <Space>
                             <Button size="large" type="primary" htmlType="submit">
-                                Publish
+                            {articleId ? 'Edit' : 'Publish'}
                             </Button>
                         </Space>
                     </Form.Item>

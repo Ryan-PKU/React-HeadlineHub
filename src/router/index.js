@@ -6,6 +6,7 @@ import Home from '@/pages/Home'
 import Article from '@/pages/Article'
 import Publish from '@/pages/Publish'
 
+
 const router = createBrowserRouter([
     {
         path: '/',
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
                 element:<Article/>
             },
             {
-                path:'Publish',
+                path:'publish',
                 element:<Publish/>
             }
         ]
