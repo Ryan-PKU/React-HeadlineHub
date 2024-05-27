@@ -200,7 +200,7 @@ const Publish = () => {
                         />
                     </Form.Item>
 
-                    <Form.Item wrapperCol={{ offset: 9 }}>
+                    <Form.Item wrapperCol={{ offset: 7 }}>
                         <Space>
                             <Button size="large" type="primary" htmlType="submit">
                             {articleId ? 'Edit' : 'Publish'}
