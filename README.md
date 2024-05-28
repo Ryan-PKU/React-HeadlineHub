@@ -1,4 +1,4 @@
-# Getting Started with HeadlieHub
+# Getting Started with HeadlineHub
 
 
 
