@@ -1,5 +1,5 @@
 # Getting Started with HeadlineHub
-
+**HeadlineHub** is a client application designed to connect to a local server, allowing users to publish, edit, and manage headline articles.
 
 
 In the project directory, you can run:
